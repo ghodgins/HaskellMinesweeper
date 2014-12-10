@@ -4,7 +4,8 @@ module Minesweeper where
 type Point = (Int, Int)
 
 data Square = MineSquare
-            | NumSquare { numSurrMines :: Int }
+            | VisibleNumSquare { numSurrMines :: Int }
+            | HiddenNumSquare { numSurrMines :: Int }
             | FlaggedSquare
 
 data Board = Board { width    :: Int
@@ -21,4 +22,4 @@ createGrid :: Int -> Int -> [[Square]]
 createGrid width height = replicate height $ createRowSquares width
 
 createRowSquares :: Int -> [Square]
-createRowSquares length = replicate length $ NumSquare 0
+createRowSquares length = replicate length $ HiddenNumSquare 0
