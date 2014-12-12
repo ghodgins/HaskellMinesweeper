@@ -69,6 +69,6 @@ modifySquare board (row, column) newSquare
         (front, oldSpace:tail) -> Right $ restoreBoard board (front ++ newSquare : tail) row
 
 restoreBoard :: [[Square]] -> [Square] -> Int -> [[Square]] 
-restoreBoard board newRow splitRow
-    | otherwise = case splitAt splitRow board of
+restoreBoard board newRow splitRow =
+    case splitAt splitRow board of
         (top, oldRow:bottom) -> top ++ newRow : bottom
