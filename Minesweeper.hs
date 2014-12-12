@@ -29,11 +29,24 @@ data Square = MineSquare
             | HiddenNumSquare { numSurrMines :: Int }
             | FlaggedSquare { flagged :: Square}
 
+instance Show Square where
+    show MineSquare = " "
+    show (VisibleNumSquare mines) = show mines
+    show (HiddenNumSquare mines) = " "
+    show (FlaggedSquare square) = "F"
+
 data Board = Board { width    :: Int
                    , height   :: Int
                    , numMines :: Int
                    , state    :: [[Square]] 
                    }
+
+instance Show Board where
+    show (Board width height numMines state) =
+        concatMap rowShow state
+            where
+                rowShow :: [Square] -> String
+                rowShow row = (show row) ++ "\n"
 
 createEmptyBoard :: Int -> Int -> Board
 createEmptyBoard width height =
