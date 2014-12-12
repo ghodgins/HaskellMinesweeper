@@ -3,4 +3,6 @@ module Main where
 import Minesweeper
 
 main :: IO ()
-main = putStrLn "Hey! This isn't Minesweeper!"
+main = do
+    let board = createEmptyBoard 8 8
+    putStrLn "Hey! This isn't Minesweeper!"

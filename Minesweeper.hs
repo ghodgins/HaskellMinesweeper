@@ -1,17 +1,29 @@
+{-#LANGUAGE LambdaCase, RecordWildCards #-}
+
 module Minesweeper where
 
 -- Used to index board (X, Y)
 type Point = (Int, Int)
 
--- returns adjacent points around a sqare
--- starting at below the current point
-adjacentPositions :: Point -> [Point]
-adjacentPositions (x,y) = [(x,y-1), (x-1,y-1),
-                           (x-1,y), (x-1,y+1),
-                           (x,y+1), (x+1,y+1),
-                           (x+1,y), (x+1,y-1)
-                          ]
+adjacentSquares :: Point -> Board -> [Point]
+adjacentSquares point Board{..} = filter isValid . adjacentPoints $ point
+    where
+        isValid :: Point -> Bool
+        isValid (x, y)
+            | x < 0         = False
+            | x >= width    = False
+            | y < 0         = False
+            | y >= height   = False
+            | otherwise     = True
 
+-- returns all adjacent points around a sqare
+-- starting at below the current point
+adjacentPoints :: Point -> [Point]
+adjacentPoints (x,y) = [(x,y-1), (x-1,y-1),
+                        (x-1,y), (x-1,y+1),
+                        (x,y+1), (x+1,y+1),
+                        (x+1,y), (x+1,y-1)
+                       ]
 data Square = MineSquare
             | VisibleNumSquare { numSurrMines :: Int }
             | HiddenNumSquare { numSurrMines :: Int }
