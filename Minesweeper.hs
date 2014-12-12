@@ -54,3 +54,21 @@ createEmptyBoard width height =
 
 createGrid :: Int -> Int -> [[Square]]
 createGrid width height = replicate height . replicate width $ HiddenNumSquare 0
+
+modifyBoard :: Board -> Point -> Square -> Either String Board
+modifyBoard Board{..} point square =
+    case modifySquare state point square of
+        (Left msg)    -> Left msg
+        (Right board) -> Right $ Board width height numMines board 
+
+modifySquare :: [[Square]] -> Point -> Square -> Either String [[Square]]
+modifySquare board (row, column) newSquare
+    | row >= length (board !! 0)   = Left "Row out of bounds"
+    | column >= length board       = Left "Column out of bounds"
+    | otherwise = case splitAt column (board!!row) of
+        (front, oldSpace:tail) -> Right $ restoreBoard board (front ++ newSquare : tail) row
+
+restoreBoard :: [[Square]] -> [Square] -> Int -> [[Square]] 
+restoreBoard board newRow splitRow
+    | otherwise = case splitAt splitRow board of
+        (top, oldRow:bottom) -> top ++ newRow : bottom
