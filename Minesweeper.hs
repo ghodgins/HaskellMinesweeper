@@ -1,12 +1,21 @@
 module Minesweeper where
 
--- Used to index board
+-- Used to index board (X, Y)
 type Point = (Int, Int)
+
+-- returns adjacent points around a sqare
+-- starting at below the current point
+adjacentPositions :: Point -> [Point]
+adjacentPositions (x,y) = [(x,y-1), (x-1,y-1),
+                           (x-1,y), (x-1,y+1),
+                           (x,y+1), (x+1,y+1),
+                           (x+1,y), (x+1,y-1)
+                          ]
 
 data Square = MineSquare
             | VisibleNumSquare { numSurrMines :: Int }
             | HiddenNumSquare { numSurrMines :: Int }
-            | FlaggedSquare
+            | FlaggedSquare { flagged :: Square}
 
 data Board = Board { width    :: Int
                    , height   :: Int
@@ -19,7 +28,4 @@ createEmptyBoard width height =
     Board width height 0 $ createGrid width height
 
 createGrid :: Int -> Int -> [[Square]]
-createGrid width height = replicate height $ createRowSquares width
-
-createRowSquares :: Int -> [Square]
-createRowSquares length = replicate length $ HiddenNumSquare 0
+createGrid width height = replicate height . replicate width $ HiddenNumSquare 0
