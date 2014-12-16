@@ -4,7 +4,7 @@ import Minesweeper
 
 main :: IO ()
 main = do
-    let board = createEmptyBoard 8 8
+    let board = createEmptyBoard 12 12
     putStrLn $ show board
 
     putStrLn "\n"
