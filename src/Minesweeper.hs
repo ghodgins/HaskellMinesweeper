@@ -16,7 +16,7 @@ adjacentSquares point Board{..} = filter isValid . adjacentPoints $ point
             | y >= height   = False
             | otherwise     = True
 
--- returns all adjacent points around a sqare
+-- returns all adjacent points around a square
 -- starting at below the current point
 adjacentPoints :: Point -> [Point]
 adjacentPoints (x,y) = [(x,y-1), (x-1,y-1),
@@ -48,25 +48,34 @@ instance Show Board where
                 rowShow :: [Square] -> String
                 rowShow row = (show row) ++ "\n"
 
+createGameBoard :: Int -> Int -> [Point] -> Board
+createGameBoard width height mines =
+    Board width height (length mines) $ createGameGrid width height mines
+
 createEmptyBoard :: Int -> Int -> Board
 createEmptyBoard width height =
     Board width height 0 $ createGrid width height
 
+createGameGrid :: Int -> Int -> [Point] -> [[Square]]
+createGameGrid width height minePoints =
+    addMines minePoints $ createGrid width height
+
 createGrid :: Int -> Int -> [[Square]]
 createGrid width height = replicate height . replicate width $ HiddenNumSquare 0
 
-modifyBoard :: Board -> Point -> Square -> Either String Board
+addMines :: [Point] -> [[Square]] -> [[Square]]
+addMines [] board = board
+addMines (x:xs) board = addMines xs $ modifySquare board x (MineSquare)
+
+modifyBoard :: Board -> Point -> Square -> Board
 modifyBoard Board{..} point square =
     case modifySquare state point square of
-        (Left msg)    -> Left msg
-        (Right board) -> Right $ Board width height numMines board 
+        board -> Board width height numMines board 
 
-modifySquare :: [[Square]] -> Point -> Square -> Either String [[Square]]
-modifySquare board (row, column) newSquare
-    | row >= length (board !! 0)   = Left "Row out of bounds"
-    | column >= length board       = Left "Column out of bounds"
-    | otherwise = case splitAt column (board!!row) of
-        (front, oldSpace:tail) -> Right $ restoreBoard board (front ++ newSquare : tail) row
+modifySquare :: [[Square]] -> Point -> Square -> [[Square]]
+modifySquare board (row, column) newSquare =
+    case splitAt column (board!!row) of
+        (front, oldSpace:tail) -> restoreBoard board (front ++ newSquare : tail) row
 
 restoreBoard :: [[Square]] -> [Square] -> Int -> [[Square]] 
 restoreBoard board newRow splitRow =
