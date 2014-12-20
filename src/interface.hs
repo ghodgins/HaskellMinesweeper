@@ -1,5 +1,6 @@
 module Main where
 import Graphics.UI.WX
+import Graphics.UI.WXCore
 
 --on Mac compile using: ghc --make interface.hs
 
@@ -19,9 +20,9 @@ splashScreen
         openImage p vbitmap "background.bmp"
 
         st <- staticText f [ text := "Choose difficulty", position := pt 100 185]
-        b <- button p [ text := "easy" , position := pt 85 205, clientSize := sz 150 50, on command := startgame  10]
-        b <- button p [ text := "medium" , position := pt 85 230, clientSize := sz 150 50 , on command := startgame  20]
-        b <- button p [ text := "hard" , position := pt 85 255, clientSize := sz 150 50 ,on command := startgame  30 ]
+        b <- button p [ text := "easy" , position := pt 85 205, clientSize := sz 150 50, on command := onStartGame f 10]
+        b <- button p [ text := "medium" , position := pt 85 230, clientSize := sz 150 50 , on command := onStartGame f 20]
+        b <- button p [ text := "hard" , position := pt 85 255, clientSize := sz 150 50 ,on command := onStartGame f 30 ]
 
         set p [clientSize := sz w h]
     where
@@ -43,15 +44,27 @@ splashScreen
                case mbBitmap of
                  Nothing -> return () 
                  Just bm -> drawBitmap dc bm pointZero False []
+        onStartGame f size
+          = do 
+                close f
+                startGame size
 
 
-startgame ::  Int -> IO ()
-startgame a 
-    = do     f <- frame [ text := "Minesweeper", clientSize := sz w h ]
+startGame ::  Int -> IO ()
+startGame a 
+    = do     f <- frame [ text := "Minesweeper", clientSize := sz 600 400 ]
              p <- panel f []
-            -- st <- staticText p [ text := "lets go" ]
-             --b <- buttons a p
+
+             ok <- bitmapButton f [picture := "water.bmp", text := "Ok" ]
+
+             set ok [on command := onMineClick f ok]
              set p [clientSize := sz w h]
+    where
+        onMineClick f ok
+            = do
+                bm <- bitmapCreateFromFile "mine.bmp"
+                bitmapButtonSetBitmapLabel ok bm
+
 
 --need to change to return a list of buttons
 -- this method is to create the x number of buttons based on level of difficulty.. currently creates 1 button
