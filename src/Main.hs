@@ -1,6 +1,7 @@
 module Main where
 
 import Minesweeper
+import Types
 
 
 minePoints :: [Point]
@@ -17,7 +18,7 @@ main = do
 gameLoop :: Board -> IO ()
 gameLoop board = do
     move <- getUserMove
-    let newBoard = modifyBoard board move (VisibleNumSquare 5)
+    let newBoard = board--modifyBoard board move (VisibleNumSquare 5)
     putStrLn $ show newBoard
     gameLoop newBoard
 
