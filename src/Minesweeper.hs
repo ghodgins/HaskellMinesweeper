@@ -31,5 +31,23 @@ modifyGame Game{..} point square newState =
 
 reveal :: Game -> Point -> Game
 reveal game@Game{..} (x, y) = case board!!y!!x of
-    (HiddenNumSquare val) -> modifyGame game (x, y) (VisibleNumSquare val) Play
-    (HiddenMineSquare)    -> modifyGame game (x, y) (VisibleMineSquare) Lost
+    (HiddenNumSquare 0)    -> zeroFlood (modifyGame game (x, y) (VisibleNumSquare 0) Play) (x, y)
+    (HiddenNumSquare val)  -> modifyGame game (x, y) (VisibleNumSquare val) Play
+    (HiddenMineSquare)     -> modifyGame game (x, y) (VisibleMineSquare) Lost
+    _                      -> game
+
+flag :: Game -> Point -> Game
+flag game@Game{..} (x, y) = case board!!y!!x of
+    (FlaggedSquare square)       -> modifyGame game (x, y) square Play
+    square@(HiddenNumSquare val) -> modifyGame game (x, y) (FlaggedSquare square) Play
+    square@(HiddenMineSquare)    -> modifyGame game (x, y) (FlaggedSquare square) Play
+    _                            -> game
+
+zeroFlood :: Game -> Point -> Game
+zeroFlood game@Game{..} point = revealIfZero game $ adjacentSquares point (length board) (length (board!!0))
+
+revealIfZero :: Game -> [Point] -> Game
+revealIfZero game [] = game
+revealIfZero game@Game{..} ((x, y):xs) = case board!!y!!x of
+    (HiddenNumSquare 0) -> revealIfZero (modifyGame game (x, y) (VisibleNumSquare 0) Play) xs
+    _                   -> revealIfZero game xs

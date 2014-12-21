@@ -2,6 +2,7 @@ module Square where
 
 import Types
 
+-- returns valid points surrounding a point on the board
 adjacentSquares :: Point -> Int -> Int -> [Point]
 adjacentSquares point width height = filter isValid . adjacentPoints $ point
     where
@@ -13,8 +14,7 @@ adjacentSquares point width height = filter isValid . adjacentPoints $ point
             | y >= height   = False
             | otherwise     = True
 
--- returns all adjacent points around a square
--- starting at below the current point
+-- returns all adjacent points starting at below the current point
 adjacentPoints :: Point -> [Point]
 adjacentPoints (x,y) = [(x,y-1), (x-1,y-1),
                         (x-1,y), (x-1,y+1),
