@@ -11,6 +11,8 @@ minePoints = [(2,1), (4,6), (6,2), (3,5), (7,2)]
 
 main :: IO ()
 main = do
+    let game = createGame 8 8 minePoints
+    gameLoop game
     
 
 gameLoop :: Game -> IO ()
