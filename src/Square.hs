@@ -48,7 +48,7 @@ addMines (x:xs) board = addMines xs $ addMine board x
 
 addMine :: [[Square]] -> Point -> [[Square]]
 addMine board x = 
-    incSurr x $ modifySquare board x (VisibleMineSquare)
+    incSurr x $ modifySquare board x (HiddenMineSquare)
 
 -- increment squares surrounding newly placed mine
 incSurr :: Point -> [[Square]] -> [[Square]]
@@ -62,15 +62,14 @@ incSurr' (x:xs) board = incSurr' xs $ incrementNumSquare x board
 
 incrementNumSquare :: Point -> [[Square]] -> [[Square]]
 incrementNumSquare (x, y) board =
-    case board!!x!!y of
-        (HiddenNumSquare val) -> modifySquare board (x, y) (VisibleNumSquare (val+1))
-        (VisibleNumSquare val) -> modifySquare board (x, y) (VisibleNumSquare (val+1))
+    case board!!y!!x of
+        (HiddenNumSquare val) -> modifySquare board (x, y) (HiddenNumSquare (val+1))
         otherwise -> board
 
 modifySquare :: [[Square]] -> Point -> Square -> [[Square]]
-modifySquare board (row, column) newSquare =
-    case splitAt column (board!!row) of
-        (front, oldSpace:tail) -> restoreBoard board (front ++ newSquare : tail) row
+modifySquare board (x, y) newSquare =
+    case splitAt x (board!!y) of
+        (front, oldSpace:tail) -> restoreBoard board (front ++ newSquare : tail) y
 
 restoreBoard :: [[Square]] -> [Square] -> Int -> [[Square]] 
 restoreBoard board newRow splitRow =

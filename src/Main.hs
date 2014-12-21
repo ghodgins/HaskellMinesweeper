@@ -9,18 +9,18 @@ minePoints = [(2,1), (4,6), (6,2), (3,5), (7,2)]
 
 main :: IO ()
 main = do
-    let board = createGameBoard 8 8 minePoints
-    putStrLn $ show board
-
-    gameLoop board
+    let game = createGame 8 8 minePoints
+    gameLoop game
     
 
-gameLoop :: Board -> IO ()
-gameLoop board = do
+gameLoop :: Game -> IO ()
+gameLoop game = do
+    putStrLn $ show game
+
     move <- getUserMove
-    let newBoard = board--modifyBoard board move (VisibleNumSquare 5)
-    putStrLn $ show newBoard
-    gameLoop newBoard
+    let game' = reveal game move
+
+    gameLoop game'
 
 
 getUserMove :: IO Point
