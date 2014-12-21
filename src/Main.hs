@@ -4,17 +4,12 @@ import Minesweeper
 
 
 minePoints :: [Point]
-minePoints = [(2,1), (4,6), (6,2), (3,5)]
+minePoints = [(2,1), (4,6), (6,2), (3,5), (7,2)]
 
 main :: IO ()
 main = do
-    let board = createGameBoard 12 12 minePoints
+    let board = createGameBoard 8 8 minePoints
     putStrLn $ show board
-
-    --let modBoard = modifyBoard board (1, 1) (VisibleNumSquare 2)
-    --putStrLn $ show modBoard
-
-    --putStrLn "Hey! This isn't Minesweeper!"
 
     gameLoop board
     

@@ -5,8 +5,8 @@ module Minesweeper where
 -- Used to index board (X, Y)
 type Point = (Int, Int)
 
-adjacentSquares :: Point -> Board -> [Point]
-adjacentSquares point Board{..} = filter isValid . adjacentPoints $ point
+adjacentSquares :: Point -> Int -> Int -> [Point]
+adjacentSquares point width height = filter isValid . adjacentPoints $ point
     where
         isValid :: Point -> Bool
         isValid (x, y)
@@ -24,13 +24,16 @@ adjacentPoints (x,y) = [(x,y-1), (x-1,y-1),
                         (x,y+1), (x+1,y+1),
                         (x+1,y), (x+1,y-1)
                        ]
-data Square = MineSquare
+
+data Square = VisibleMineSquare
+            | HiddenMineSquare
             | VisibleNumSquare { numSurrMines :: Int }
             | HiddenNumSquare { numSurrMines :: Int }
             | FlaggedSquare { flagged :: Square}
 
 instance Show Square where
-    show MineSquare = " "
+    show VisibleMineSquare = "X"
+    show HiddenMineSquare = " "
     show (VisibleNumSquare mines) = show mines
     show (HiddenNumSquare mines) = " "
     show (FlaggedSquare square) = "F"
@@ -50,7 +53,8 @@ instance Show Board where
 
 createGameBoard :: Int -> Int -> [Point] -> Board
 createGameBoard width height mines =
-    Board width height (length mines) $ createGameGrid width height mines
+    Board width height (length mines) board
+        where board = createGameGrid width height mines
 
 createEmptyBoard :: Int -> Int -> Board
 createEmptyBoard width height =
@@ -65,7 +69,28 @@ createGrid width height = replicate height . replicate width $ HiddenNumSquare 0
 
 addMines :: [Point] -> [[Square]] -> [[Square]]
 addMines [] board = board
-addMines (x:xs) board = addMines xs $ modifySquare board x (MineSquare)
+addMines (x:xs) board = addMines xs $ addMine board x
+
+addMine :: [[Square]] -> Point -> [[Square]]
+addMine board x = 
+    incSurr x $ modifySquare board x (VisibleMineSquare)
+
+-- increment squares surrounding newly placed mine
+incSurr :: Point -> [[Square]] -> [[Square]]
+incSurr x board = incSurr' (adjacentSquares x width height) board
+    where height = length board
+          width = length $ board!!0
+
+incSurr' :: [Point] -> [[Square]] -> [[Square]]
+incSurr' [] board = board
+incSurr' (x:xs) board = incSurr' xs $ incrementNumSquare x board
+
+incrementNumSquare :: Point -> [[Square]] -> [[Square]]
+incrementNumSquare (x, y) board =
+    case board!!x!!y of
+        (HiddenNumSquare val) -> modifySquare board (x, y) (VisibleNumSquare (val+1))
+        (VisibleNumSquare val) -> modifySquare board (x, y) (VisibleNumSquare (val+1))
+        otherwise -> board
 
 modifyBoard :: Board -> Point -> Square -> Board
 modifyBoard Board{..} point square =
