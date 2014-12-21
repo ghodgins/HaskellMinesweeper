@@ -1,7 +1,8 @@
 module Main where
 import Graphics.UI.WX
 import Graphics.UI.WXCore
-
+import Control.Monad
+import Minesweeper 
 --on Mac compile using: ghc --make interface.hs
 
 w = 300
@@ -49,25 +50,41 @@ splashScreen
                 close f
                 startGame size
 
+makeMineSweeperButton :: Frame() -> Int -> Int -> IO (BitmapButton())
+makeMineSweeperButton f r c = bitmapButton f [picture := "water.bmp", text := "Ok" , position := pt ((31*r)+10) ((31*c)+10) ]
+
+createGuiGridRow :: Int -> Frame() -> Int -> [IO (BitmapButton())]
+createGuiGridRow s f r = map (makeMineSweeperButton f r) [0..s]
+
+
+createGuiGrid :: Int -> Frame() -> [[IO (BitmapButton())]]
+createGuiGrid s f = map (createGuiGridRow s f) [0..s]
 
 startGame ::  Int -> IO ()
-startGame a 
-    = do     f <- frame [ text := "Minesweeper", clientSize := sz 600 400 ]
+startGame s
+    = do     f <- frame [ text := "Minesweeper", clientSize := sz ((31*(s+1))+20) ((31*(s+1))+20) ]
              p <- panel f []
 
-             ok <- bitmapButton f [picture := "water.bmp", text := "Ok" ]
+             let buttons = createGuiGrid s f
+             out <- sequence $ concat buttons
 
-             set ok [on command := onMineClick f ok]
+             mapM (\x -> set x [on click := onLeftClick f x, on clickRight := onRightClick f x]) $ out
+             mapM (\x -> prepareInitial f x) $ out 
+
+             --ok <- bitmapButton f [picture := "water.bmp", text := "Ok" ]
+
+             --set ok [on command := onMineClick f ok]
              set p [clientSize := sz w h]
     where
-        onMineClick f ok
+        prepareInitial f ok
+            = do
+                bm <- bitmapCreateFromFile "water.bmp"
+                bitmapButtonSetBitmapLabel ok bm
+        onLeftClick f ok pt
             = do
                 bm <- bitmapCreateFromFile "mine.bmp"
                 bitmapButtonSetBitmapLabel ok bm
-
-
---need to change to return a list of buttons
--- this method is to create the x number of buttons based on level of difficulty.. currently creates 1 button
---buttons :: Int -> Panel () ->  IO (Button ())
---buttons 0 p = return                    --return once all buttons are created
---buttons a p = button p [text := "_", position := pt 10 10]
+        onRightClick f ok pt
+            = do
+                bm <- bitmapCreateFromFile "flag.bmp"
+                bitmapButtonSetBitmapLabel ok bm
