@@ -11,6 +11,8 @@ minePoints = [(2,1), (4,6), (6,2), (3,5), (7,2)]
 
 main :: IO ()
 main = do
+    let game = createGame 8 8 minePoints
+    gameLoop game
     
 
 gameLoop :: Game -> IO ()
@@ -21,7 +23,6 @@ gameLoop game = do
     let game' = case userMove of
                     (1, move) -> reveal game move
                     (2, move)   -> flag game move
-
     case game' of
         (Game Play _ _) -> gameLoop game'
         (Game Won _ _)  -> putStrLn $ "\nYou won the game!\n\n" ++ (show game')
