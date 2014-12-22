@@ -43,13 +43,30 @@ flag game@Game{..} (x, y) = case board!!y!!x of
     square@(HiddenMineSquare)    -> modifyGame game (x, y) (FlaggedSquare square) Play
     _                            -> game
 
+-- Win: No mine squares on the board & num of flagged squares = number of mines
+checkGameWin :: Game -> GameState
+checkGameWin game@Game{..} = if checkForMines game-- && checkFlagsUsed game
+                                 then Won
+                                 else Play
+
+checkForMines :: Game -> Bool
+checkForMines Game{..} = all (\x' -> x' /= (HiddenMineSquare)) (concat board)
+
+{-checkFlagsUsed :: Game -> Bool
+checkFlagsUsed Game{..} = if (count (FlaggedSquare) (concat board)) == numMines
+                              then True
+                              else False
+-}
+count :: Eq a => a -> [a] -> Int
+count x = length . filter (\x' -> x' == x)
+
 zeroFlood :: Game -> Point -> Game
 zeroFlood game@Game{..} point = revealIfZero game $ adjacentSquares point (length board) (length (board!!0))
 
 revealIfZero :: Game -> [Point] -> Game
 revealIfZero game [] = game
 revealIfZero game@Game{..} ((x, y):xs) = case board!!y!!x of
-    (HiddenNumSquare 0) -> revealIfZero (modifyGame game (x, y) (VisibleNumSquare 0) Play) xs
+    (HiddenNumSquare 0) -> revealIfZero (modifyGame game (x, y) (VisibleNumSquare 0) Play) (xs ++ (adjacentSquares (x, y) (length board) (length (board!!0))))
     _                   -> revealIfZero game xs
 
 squareState :: Game -> Point -> Square
