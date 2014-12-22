@@ -88,7 +88,10 @@ startGame s
              let buttons = createGuiGrid s f
              out <- sequence $ concat buttons
 
-             mapAccumM (\i x -> do r <- set x [on click := onLeftClick gameState f out x i, on clickRight := onRightClick gameState f x i]; return (i+1, r)) 0 out
+             mapAccumM (\i x -> do 
+                r <- set x [on click := onLeftClick gameState f out x i, on clickRight := onRightClick gameState f out x i]
+                return (i+1, r)) 0 out
+
              mapM (\x -> prepareInitial f x) $ out 
              set p [clientSize := sz w h]
     where
@@ -98,18 +101,19 @@ startGame s
                 bitmapButtonSetBitmapLabel ok bm
         refreshTiles gameState f out ok
             = do
+                mine <- bitmapCreateFromFile "mine.bmp"
+                water <- bitmapCreateFromFile "water.bmp"
+                flag <- bitmapCreateFromFile "flag.bmp"
+                zero <- bitmapCreateFromFile "0.bmp"
+                one <- bitmapCreateFromFile "1.bmp"
+                two <- bitmapCreateFromFile "2.bmp"
+                three <- bitmapCreateFromFile "3.bmp"
+                four <- bitmapCreateFromFile "4.bmp"
+                five <- bitmapCreateFromFile "5.bmp"
+
                 mapAccumM (\i x -> do 
                     game <- varGet gameState
                     putStrLn $ show game
-                    mine <- bitmapCreateFromFile "mine.bmp"
-                    water <- bitmapCreateFromFile "water.bmp"
-                    flag <- bitmapCreateFromFile "flag.bmp"
-                    zero <- bitmapCreateFromFile "0.bmp"
-                    one <- bitmapCreateFromFile "1.bmp"
-                    two <- bitmapCreateFromFile "2.bmp"
-                    three <- bitmapCreateFromFile "3.bmp"
-                    four <- bitmapCreateFromFile "4.bmp"
-                    five <- bitmapCreateFromFile "5.bmp"
                     r <- putStrLn $ show game
 
                     case squareState game ((i `mod` 10), quot i 10) of
@@ -120,8 +124,8 @@ startGame s
                         (FlaggedSquare _)       -> bitmapButtonSetBitmapLabel x flag
 
                         -- Apologies about the next few lines, I attempted to insert text
-                        -- into the buttons but it messed up rendering, so unfortunately
-                        -- we are dealing with 
+                        -- into the buttons on top of image but it messed up the
+                        -- rendering, so unfortunately we are dealing with providing a case for each number
                         (VisibleNumSquare 0)  -> bitmapButtonSetBitmapLabel x zero 
                         (VisibleNumSquare 1)  -> bitmapButtonSetBitmapLabel x one 
                         (VisibleNumSquare 2)  -> bitmapButtonSetBitmapLabel x two 
@@ -131,20 +135,22 @@ startGame s
                     return (i+1, r)) 0 out
         onLeftClick gameState f out ok i pt
             = do
-                print (quot i 10, (i `mod` 10))
                 game <- varGet gameState
                 varSet gameState (reveal (game) ((i `mod` 10), quot i 10))
                 game <- varGet gameState
-                
-
                 refreshTiles gameState f out ok
+                case game of
+                    (Game Won _ _)  -> putStrLn $ "\nYou won the game!\n\n"
+                    (Game Lost _ _)  -> putStrLn $ "\nYou lost the game!\n\n"
+                    (Game _ _ _)  -> putStrLn $ ""
                 putStrLn $ show game
-        onRightClick gameState f ok i pt
+        onRightClick gameState f out ok i pt
             = do
-                bm <- bitmapCreateFromFile "flag.bmp"
-                print (quot i 10, (i `mod` 10))
                 game <- varGet gameState
                 varSet gameState (flag (game) ((i `mod` 10), quot i 10))
                 game <- varGet gameState
+                refreshTiles gameState f out ok
+                case game of
+                    (Game Won _ _)  -> putStrLn $ "\nYou won the game!\n\n"
+                    (Game Lost _ _)  -> putStrLn $ "\nYou lost the game!\n\n"
                 putStrLn $ show game
-                bitmapButtonSetBitmapLabel ok bm
