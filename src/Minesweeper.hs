@@ -51,3 +51,6 @@ revealIfZero game [] = game
 revealIfZero game@Game{..} ((x, y):xs) = case board!!y!!x of
     (HiddenNumSquare 0) -> revealIfZero (modifyGame game (x, y) (VisibleNumSquare 0) Play) xs
     _                   -> revealIfZero game xs
+
+squareState :: Game -> Point -> Square
+squareState Game{..} (x,y) = board!!y!!x
