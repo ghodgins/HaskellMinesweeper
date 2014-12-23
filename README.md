@@ -13,11 +13,11 @@ This project implements a copy of the well known game Minesweeper in Haskell. It
 
 The project uses wxHaskell for the GUI, but most of the other libraries are standard with the Haskell Platform.
 
-![Splash Screen](/screenshots/splash.jpg?raw=true "Splash Screen")
-![Game](/screenshots/game.jpg?raw=true "Game")
-![Game 1](/screenshots/game1.jpg?raw=true "Game 1")
-![Lose](/screenshots/lose.jpg?raw=true "Lose")
-![So Close](/screenshots/soclose.jpg?raw=true "So Close")
+![Splash Screen](/screenshots/splash.jpg?raw=true "Splash Screen" =250px)
+![Game](/screenshots/game.jpg?raw=true "Game" =250px)
+![Game 1](/screenshots/game1.jpg?raw=true "Game 1" =250px)
+![Lose](/screenshots/lose.jpg?raw=true "Lose" =250px)
+![So Close](/screenshots/soclose.jpg?raw=true "So Close" =250px)
 
 ## AI Solver
 Blah blah blah
