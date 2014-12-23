@@ -1,5 +1,4 @@
 module Square where
-
 import Types
 
 -- returns valid points surrounding a point on the board

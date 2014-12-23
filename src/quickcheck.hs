@@ -36,5 +36,11 @@ prop_createGame _ _ [(0,0)] = True
 prop_createGame x y [(a,b)]  
 	 | createGame x y [(a,b)] == createGame x y [(a,b)] = True
 	 | otherwise 										= False
-	 where x /> a 
-main = quickCheck prop_createGame
+	
+
+prop_addMine :: [[Square]] -> Point -> Bool
+prop_addMine [[x]] (a,b)
+	= addMine [[x]] (a,b) == addMine [[x]] (a,b)
+
+
+main = quickCheck prop_addMine
