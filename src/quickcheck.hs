@@ -48,11 +48,6 @@ prop_addMine x (a,b)
 -- incSurr, incrementNumSquare, modifySquare, restoreBoard all from Square.hs
 
 
-
-
-
-
-
 -- need to care for zero cases & ensure Point is a valid one
 --simlar errors showing up for this one, invalid and negative values are throwing it
 prop_createGame :: Int -> Int -> Int -> Bool
@@ -83,6 +78,6 @@ prop_reveal x y
 	= reveal x y == reveal x y
 
 
-main = quickCheck prop_generateMines
+main = quickCheck prop_creategrid
 
 
