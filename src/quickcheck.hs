@@ -1,10 +1,10 @@
 
-import Test.QuickCheck
+import Test.QuickCheck hiding (Gen)
 import Square
 import Types
 import Minesweeper
 import Data.List
-
+import System.Random
 --checks that adjacent points are correctly returned, 
 --this test works
 prop_adjacentPoints :: Point -> Bool
@@ -68,7 +68,14 @@ prop_createGame _ _ 0 = True
 -- modifyGame, allPoints,revealAll, flag, checkGameWin, checkForMines, checkFlagsUsed
 -- countFlaggedMines, count, revealIfZero, squareState, generateMines
 
+-- this method uses a randomly generated value :/....this doesnt work
+newtype Gen a = Gen (Int -> StdGen -> a)
+rand :: Gen StdGen
+rand = Gen (\n r -> r)
 
+prop_generateMines :: Int -> Int -> Int -> StdGen -> Bool
+prop_generateMines x y numMines a
+	=  length (generateMines x y numMines a) == numMines
 
 --need instance of arbitrary Game
 prop_reveal :: Game -> Point -> Bool
@@ -76,7 +83,6 @@ prop_reveal x y
 	= reveal x y == reveal x y
 
 
-main = quickCheck prop_adjacentPoints
-
+main = quickCheck prop_generateMines
 
 
