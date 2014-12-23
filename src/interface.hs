@@ -82,7 +82,7 @@ startGame s
     = do     
              vbitmap <- variable [value := Nothing]
              rng <- newStdGen
-             gameState <- varCreate $ createGame (s+1) (s+1) 8 rng
+             gameState <- varCreate $ createGame (s+1) (s+1) (s*3) rng
              f <- frame [ text := "Minesweeper", clientSize := sz ((31*(s+1))+20) ((31*(s+1))+100), resizeable := False]
              p <- panel f [on paint := onPaint vbitmap, fullRepaintOnResize := False, position := pt (quot (((31*(s+1))+20)-316) 2) 10]
 

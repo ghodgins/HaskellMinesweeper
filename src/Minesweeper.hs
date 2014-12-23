@@ -32,12 +32,25 @@ modifyGame Game{..} point square newState =
     case modifySquare board point square of
         board' -> (Game newState numMines board')
 
+allPoints :: Game -> Int -> [Point] -> [Point]
+allPoints game@Game{..} 0 acc = acc ++ [(0,0)]
+allPoints game@Game{..} count acc = allPoints game (count-1) $  acc ++ [(count `mod` (length board), quot count (length board))]
+
 reveal :: Game -> Point -> Game
 reveal game@Game{..} (x, y) = case board!!y!!x of
     (HiddenNumSquare 0)    -> zeroFlood (modifyGame game (x, y) (VisibleNumSquare 0) (checkGameWin game)) (x, y)
     (HiddenNumSquare val)  -> modifyGame game (x, y) (VisibleNumSquare val) (checkGameWin game)
-    (HiddenMineSquare)     -> modifyGame game (x, y) (VisibleMineSquare) Lost
+    (HiddenMineSquare)     -> modifyGame (revealAll game (allPoints game (((length board)*(length (board!!0)))-1) [] )) (x, y) (VisibleMineSquare) Lost
     _                      -> game
+
+revealAll :: Game -> [Point] -> Game
+revealAll game@Game{..} [] = game
+revealAll game@Game{..} ((x, y):xs) = case board!!y!!x of
+    (HiddenNumSquare 0)    -> revealAll (modifyGame game (x, y) (VisibleNumSquare 0) Lost) xs
+    (HiddenNumSquare val)  -> revealAll (modifyGame game (x, y) (VisibleNumSquare val) Lost) xs
+    (HiddenMineSquare)     -> revealAll (modifyGame game (x, y) (VisibleMineSquare) Lost) xs
+    (FlaggedSquare square) -> revealAll (modifyGame game (x, y) square Lost) ((x,y):xs)
+    _                      -> revealAll game xs
 
 flag :: Game -> Point -> Game
 flag game@Game{..} (x, y) = case board!!y!!x of
@@ -60,6 +73,7 @@ checkFlagsUsed Game{..} = if (count (FlaggedSquare) (concat board)) == numMines
                               then True
                               else False
 -}
+
 count :: Eq a => a -> [a] -> Int
 count x = length . filter (\x' -> x' == x)
 
