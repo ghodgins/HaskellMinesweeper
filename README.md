@@ -7,14 +7,20 @@ HaskellMinesweeper
   - Quickcheck
   - AI Solver
 
+
+## Game Implementation
 This project implements a copy of the well known game Minesweeper in Haskell. It is playable through the GUI (interface.hs), most features can also be demonstrated through the CLI version (Main.hs).
 
 The project uses wxHaskell for the GUI, but most of the other libraries are standard with the Haskell Platform.
 
-##Authors
- - Kevin Bluett
- - Geoffrey Hodgins
- - Ciaran Finn
+![Splash Screen](/screenshots/splash.jpg?raw=true "Splash Screen")
+![Game](/screenshots/game.jpg?raw=true "Game")
+![Game 1](/screenshots/game1.jpg?raw=true "Game 1")
+![Lose](/screenshots/lose.jpg?raw=true "Lose")
+![So Close](/screenshots/soclose.jpg?raw=true "So Close")
+
+## AI Solver
+Blah blah blah
 
 ## Usage
 ```sh
@@ -23,6 +29,11 @@ $ cd HaskellMinesweeper/src
 $ ghc interface.hs
 $ ./interface
 ```
+
+##Authors
+ - Kevin Bluett
+ - Geoffrey Hodgins
+ - Ciaran Finn
 
 ##Todo/Issues
 - Refactor the game implementation (make more monadic and readable, generally use best-practices)
