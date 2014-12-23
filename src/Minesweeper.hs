@@ -61,18 +61,20 @@ flag game@Game{..} (x, y) = case board!!y!!x of
 
 -- Win: No mine squares on the board & num of flagged squares = number of mines
 checkGameWin :: Game -> GameState
-checkGameWin game@Game{..} = if checkForMines game-- && checkFlagsUsed game
+checkGameWin game@Game{..} = if checkForMines game && checkFlagsUsed game
                                  then Won
                                  else Play
 
 checkForMines :: Game -> Bool
-checkForMines Game{..} = all (\x' -> x' /= (HiddenMineSquare)) (concat board)
+checkForMines Game{..} = all (\x' -> x' /= HiddenMineSquare) (concat board)
 
-{-checkFlagsUsed :: Game -> Bool
-checkFlagsUsed Game{..} = if (count (FlaggedSquare) (concat board)) == numMines
+checkFlagsUsed :: Game -> Bool
+checkFlagsUsed Game{..} = if countFlaggedMines board == numMines
                               then True
                               else False
--}
+
+countFlaggedMines :: [[Square]] -> Int
+countFlaggedMines board = count (FlaggedSquare (HiddenMineSquare)) (concat board)
 
 count :: Eq a => a -> [a] -> Int
 count x = length . filter (\x' -> x' == x)
