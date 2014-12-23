@@ -71,9 +71,6 @@ mapAccumM f init xs = do
 data Move = Reveal
           | Flag
 
-minePoints :: [Point]
-minePoints = [(2,1), (4,6), (6,2), (3,5), (7,2)]
-
 scalarToPoint :: Game -> Int -> (Int, Int)
 scalarToPoint Game{..} scalar = (scalar `mod` (length board), quot scalar (length board))
 
