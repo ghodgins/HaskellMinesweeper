@@ -25,7 +25,7 @@ splashScreen
 
         f <- frame [ text := "Minesweeper", clientSize := sz w h, resizeable := False]
         p <- panel f [on paint := onPaint vbitmap, bgcolor := white, fullRepaintOnResize := False]
-        openImage p vbitmap "background.bmp"
+        openImage p vbitmap "img/background.bmp"
 
         st <- staticText f [ text := "Choose difficulty", position := pt 100 185]
         b <- button p [ text := "easy" , position := pt 85 220, clientSize := sz 150 25, on command := onStartGame f 9]
@@ -52,7 +52,7 @@ splashScreen
                 startGame size
 
 makeMineSweeperButton :: Frame() -> Int -> Int -> IO (BitmapButton())
-makeMineSweeperButton f r c = bitmapButton f [picture := "water.bmp", text := "Ok" , position := pt ((31*c)+10) ((31*r)+90)]
+makeMineSweeperButton f r c = bitmapButton f [picture := "img/water.bmp", text := "Ok" , position := pt ((31*c)+10) ((31*r)+90)]
 
 createGuiGridRow :: Int -> Frame() -> Int -> [IO (BitmapButton())]
 createGuiGridRow s f r = map (makeMineSweeperButton f r) [0..s]
@@ -67,12 +67,6 @@ mapAccumM f init xs = do
                         (acc',y) <- f acc x
                         return (acc',y:ys)) (init,[]) xs
   return (acc, reverse rev)
-
-data Move = Reveal
-          | Flag
-
-minePoints :: [Point]
-minePoints = [(2,1), (4,6), (6,2), (3,5), (7,2)]
 
 scalarToPoint :: Game -> Int -> (Int, Int)
 scalarToPoint Game{..} scalar = (scalar `mod` (length board), quot scalar (length board))
@@ -93,21 +87,24 @@ startGame s
                 r <- set x [on click := onLeftClick p vbitmap gameState f out x i, on clickRight := onRightClick p vbitmap gameState f out x i]
                 return (i+1, r)) 0 out
 
-             openImage p vbitmap "topbanner.bmp"
+             openImage p vbitmap "img/topbanner.bmp"
              refreshTiles gameState f out 
              set p [clientSize := sz 330 80]
     where
         refreshTiles gameState f out
             = do
-                mine <- bitmapCreateFromFile "mine.bmp"
-                water <- bitmapCreateFromFile "water.bmp"
-                flag <- bitmapCreateFromFile "flag.bmp"
-                zero <- bitmapCreateFromFile "0.bmp"
-                one <- bitmapCreateFromFile "1.bmp"
-                two <- bitmapCreateFromFile "2.bmp"
-                three <- bitmapCreateFromFile "3.bmp"
-                four <- bitmapCreateFromFile "4.bmp"
-                five <- bitmapCreateFromFile "5.bmp"
+                mine <- bitmapCreateFromFile "img/mine.bmp"
+                water <- bitmapCreateFromFile "img/water.bmp"
+                flag <- bitmapCreateFromFile "img/flag.bmp"
+                zero <- bitmapCreateFromFile "img/0.bmp"
+                one <- bitmapCreateFromFile "img/1.bmp"
+                two <- bitmapCreateFromFile "img/2.bmp"
+                three <- bitmapCreateFromFile "img/3.bmp"
+                four <- bitmapCreateFromFile "img/4.bmp"
+                five <- bitmapCreateFromFile "img/5.bmp"
+                six <- bitmapCreateFromFile "img/6.bmp"
+                seven <- bitmapCreateFromFile "img/7.bmp"
+                eight <- bitmapCreateFromFile "img/8.bmp"
 
                 mapAccumM (\i x -> do 
                     game <- varGet gameState
@@ -127,6 +124,9 @@ startGame s
                         (VisibleNumSquare 3)  -> bitmapButtonSetBitmapLabel x three 
                         (VisibleNumSquare 4)  -> bitmapButtonSetBitmapLabel x four 
                         (VisibleNumSquare 5)  -> bitmapButtonSetBitmapLabel x five 
+                        (VisibleNumSquare 6)  -> bitmapButtonSetBitmapLabel x six 
+                        (VisibleNumSquare 7)  -> bitmapButtonSetBitmapLabel x seven 
+                        (VisibleNumSquare 8)  -> bitmapButtonSetBitmapLabel x eight 
                     return (i+1, Nothing)) 0 out
         onLeftClick sw vbitmap gameState f out ok i pt
             = do
@@ -135,8 +135,8 @@ startGame s
                 game <- varGet gameState
                 refreshTiles gameState f out
                 case game of
-                    (Game Won _ _)  -> openImage sw vbitmap "win.bmp"
-                    (Game Lost _ _)  -> openImage sw vbitmap "lose.bmp"
+                    (Game Won _ _)  -> openImage sw vbitmap "img/win.bmp"
+                    (Game Lost _ _)  -> openImage sw vbitmap "img/lose.bmp"
                     (Game _ _ _)  -> putStrLn $ ""
                 putStrLn $ show game
         onRightClick sw vbitmap gameState f out ok i pt
@@ -146,8 +146,8 @@ startGame s
                 game <- varGet gameState
                 refreshTiles gameState f out
                 case game of
-                    (Game Won _ _)  -> openImage sw vbitmap "win.bmp"
-                    (Game Lost _ _)  -> openImage sw vbitmap "lose.bmp"
+                    (Game Won _ _)  -> openImage sw vbitmap "img/win.bmp"
+                    (Game Lost _ _)  -> openImage sw vbitmap "img/lose.bmp"
                     (Game _ _ _)  -> putStrLn $ ""
                 putStrLn $ show game
         openImage sw vbitmap fname
