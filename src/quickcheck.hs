@@ -25,6 +25,7 @@ prop_createGameGrid x y [(a,b)]
 	= createGameGrid x y [(a,b)] == createGameGrid x y [(a,b)]
 
 -- need to care for zero cases & ensure Point is a valid one
+--simlar errors showing up for this one, invalid and negative values are throwing it
 prop_createGame :: Int -> Int -> [(Int,Int)] -> Bool
 prop_createGame 0 _ _ = True
 prop_createGame _ 0 _ = True
@@ -34,5 +35,5 @@ prop_createGame _ _ [(0,0)] = True
 prop_createGame x y [(a,b)]  
 	 | createGame x y [(a,b)] == createGame x y [(a,b)] = True
 	 | otherwise 										= False
-
+	 where x /> a 
 main = quickCheck prop_createGame
