@@ -107,6 +107,13 @@ revealIfZero game@Game{..} ((x, y):xs) = case board!!y!!x of
 squareState :: Game -> Point -> Square
 squareState Game{..} (x,y) = board!!y!!x
 
+getSquares :: [[Square]] -> [Point] -> [Square]
+getSquares board [] = []
+getSquares board (x:xs) = (getSquare board x) : (getSquares board xs)
+
+getSquare :: [[Square]] -> Point -> Square
+getSquare board (x, y) = board!!y!!x
+
 -- generates a valid, random distribution of points for mines
 generateMines :: Int -> Int -> Int -> StdGen -> [Point]
 generateMines width height numMines rng = take numMines $ nub $ zip xs ys
