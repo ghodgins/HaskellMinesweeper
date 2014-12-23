@@ -75,8 +75,10 @@ startGame ::  Int -> IO ()
 startGame s
     = do     
              vbitmap <- variable [value := Nothing]
+
              rng <- newStdGen
              gameState <- varCreate $ createGame (s+1) (s+1) (s*3) rng
+
              f <- frame [ text := "Minesweeper", clientSize := sz ((31*(s+1))+20) ((31*(s+1))+100), resizeable := False]
              p <- panel f [on paint := onPaint vbitmap, fullRepaintOnResize := False, position := pt (quot (((31*(s+1))+20)-316) 2) 10]
 
@@ -127,6 +129,7 @@ startGame s
                         (VisibleNumSquare 6)  -> bitmapButtonSetBitmapLabel x six 
                         (VisibleNumSquare 7)  -> bitmapButtonSetBitmapLabel x seven 
                         (VisibleNumSquare 8)  -> bitmapButtonSetBitmapLabel x eight 
+
                     return (i+1, Nothing)) 0 out
         onLeftClick sw vbitmap gameState f out ok i pt
             = do

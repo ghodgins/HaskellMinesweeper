@@ -1,5 +1,4 @@
 module Square where
-
 import Types
 
 -- returns valid points surrounding a point on the board
@@ -27,7 +26,7 @@ data Square = VisibleMineSquare
             | VisibleNumSquare { numSurrMines :: Int }
             | HiddenNumSquare { numSurrMines :: Int }
             | FlaggedSquare { flagged :: Square}
-     deriving (Eq)
+             deriving (Eq)
 
 instance Show Square where
     show VisibleMineSquare = "X"
