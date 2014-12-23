@@ -3,17 +3,16 @@ module Main where
 import Minesweeper
 import Types
 
+import System.Random
+
 data Move = Reveal
           | Flag
 
-minePoints :: [Point]
-minePoints = [(2,1), (4,6), (6,2), (3,5), (7,2)]
-
 main :: IO ()
 main = do
-    let game = createGame 8 8 minePoints
-    gameLoop game
-    
+    rng <- newStdGen
+    let game = createGame 8 8 24 rng
+    gameLoop game  
 
 gameLoop :: Game -> IO ()
 gameLoop game = do
