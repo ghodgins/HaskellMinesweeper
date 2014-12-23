@@ -6,6 +6,7 @@ import Graphics.UI.WXCore hiding (Point)
 import Control.Monad
 import Data.Traversable hiding (get, sequence, mapM)
 import Control.Monad.State.Lazy hiding (get)
+import System.Random
 
 import Minesweeper
 import Types
@@ -70,9 +71,6 @@ mapAccumM f init xs = do
 data Move = Reveal
           | Flag
 
-minePoints :: [Point]
-minePoints = [(2,1), (4,6), (6,2), (3,5), (7,2)]
-
 scalarToPoint :: Game -> Int -> (Int, Int)
 scalarToPoint Game{..} scalar = (scalar `mod` (length board), quot scalar (length board))
 
@@ -80,7 +78,8 @@ startGame ::  Int -> IO ()
 startGame s
     = do     
              vbitmap <- variable [value := Nothing]
-             gameState <- varCreate $ createGame (s+1) (s+1) minePoints
+             rng <- newStdGen
+             gameState <- varCreate $ createGame (s+1) (s+1) 8 rng
              f <- frame [ text := "Minesweeper", clientSize := sz ((31*(s+1))+20) ((31*(s+1))+100), resizeable := False]
              p <- panel f [on paint := onPaint vbitmap, fullRepaintOnResize := False, position := pt (quot (((31*(s+1))+20)-316) 2) 10]
 
