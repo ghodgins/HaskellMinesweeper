@@ -5,12 +5,12 @@ module Minesweeper where
 import Square
 import Types
 
-data GameState = Won | Lost | Play
+data GameState = Won | Lost | Play deriving(Eq)
 
-data Game = Game { state :: GameState
+data Game = Game { state :: GameState 
                  , numMines :: Int
                  , board    :: [[Square]] 
-                 }
+                 }deriving(Eq)
 
 instance Show Game where
     show (Game state numMines board) =
