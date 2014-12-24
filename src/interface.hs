@@ -11,6 +11,7 @@ import System.Random
 import Minesweeper
 import Types
 import Square
+import Solver
 
 w = 300
 h = 400
@@ -52,7 +53,7 @@ splashScreen
                 startGame size
 
 makeMineSweeperButton :: Frame() -> Int -> Int -> IO (BitmapButton())
-makeMineSweeperButton f r c = bitmapButton f [picture := "img/water.bmp", text := "Ok" , position := pt ((31*c)+10) ((31*r)+90)]
+makeMineSweeperButton f r c = bitmapButton f [picture := "img/water.bmp", text := "Ok" , position := pt ((31*c)+10) ((31*r)+120)]
 
 createGuiGridRow :: Int -> Frame() -> Int -> [IO (BitmapButton())]
 createGuiGridRow s f r = map (makeMineSweeperButton f r) [0..s]
@@ -77,23 +78,28 @@ startGame s
              vbitmap <- variable [value := Nothing]
 
              rng <- newStdGen
-             gameState <- varCreate $ createGame (s+1) (s+1) (s*3) rng
+             gameState <- varCreate $ createGame (s+1) (s+1) (s*2) rng
 
-             f <- frame [ text := "Minesweeper", clientSize := sz ((31*(s+1))+20) ((31*(s+1))+100), resizeable := False]
+             f <- frame [ text := "Minesweeper", clientSize := sz ((31*(s+1))+20) ((31*(s+1))+130), resizeable := False]
              p <- panel f [on paint := onPaint vbitmap, fullRepaintOnResize := False, position := pt (quot (((31*(s+1))+20)-316) 2) 10]
+             set p [clientSize := sz 330 80]
 
              let buttons = createGuiGrid s f
-             out <- sequence $ concat buttons
+             tiles <- sequence $ concat buttons
 
              mapAccumM (\i x -> do 
-                r <- set x [on click := onLeftClick p vbitmap gameState f out x i, on clickRight := onRightClick p vbitmap gameState f out x i]
-                return (i+1, r)) 0 out
+                r <- set x [on click := onLeftClick p vbitmap gameState f tiles x i, on clickRight := onRightClick p vbitmap gameState f tiles x i]
+                return (i+1, r)) 0 tiles
 
              openImage p vbitmap "img/topbanner.bmp"
-             refreshTiles gameState f out 
-             set p [clientSize := sz 330 80]
+             refreshTiles gameState f tiles 
+
+             bp <- panel f [position := pt (quot (((31*(s+1))+20)-300) 2) 90]
+             b <- button bp [ text := "New Game" , position := pt 4 4, clientSize := sz 150 25, on command := close f >> splashScreen]
+             b <- button bp [ text := "Attempt Move" , position := pt 150 4, clientSize := sz 150 25, on command := attemptMove f gameState tiles ]
+             set bp [clientSize := sz 330 30]
     where
-        refreshTiles gameState f out
+        refreshTiles gameState f tiles
             = do
                 mine <- bitmapCreateFromFile "img/mine.bmp"
                 water <- bitmapCreateFromFile "img/water.bmp"
@@ -117,7 +123,7 @@ startGame s
                         (HiddenNumSquare _)     -> bitmapButtonSetBitmapLabel x water
                         (FlaggedSquare _)       -> bitmapButtonSetBitmapLabel x flag
 
-                        -- Apologies about the next few lines, I attempted to insert text
+                        -- Apologies about the next few lines, we attempted to insert text
                         -- into the buttons on top of image but it messed up the
                         -- rendering, so unfortunately we are dealing with providing a case for each number
                         (VisibleNumSquare 0)  -> bitmapButtonSetBitmapLabel x zero 
@@ -130,17 +136,27 @@ startGame s
                         (VisibleNumSquare 7)  -> bitmapButtonSetBitmapLabel x seven 
                         (VisibleNumSquare 8)  -> bitmapButtonSetBitmapLabel x eight 
 
-                    return (i+1, Nothing)) 0 out
+                    return (i+1, Nothing)) 0 tiles
+        attemptMove f gameState tiles
+            = do
+                game <- varGet gameState
+                varSet gameState $ insertMatrix game $ frontierEquations game $ visibleFrontier game                
+                game <- varGet gameState
+
+                refreshTiles gameState f tiles
+                putStrLn $ show game
         onLeftClick sw vbitmap gameState f out ok i pt
             = do
                 game <- varGet gameState
                 varSet gameState $ reveal game $ scalarToPoint game i
                 game <- varGet gameState
-                refreshTiles gameState f out
+                
                 case game of
                     (Game Won _ _)  -> openImage sw vbitmap "img/win.bmp"
                     (Game Lost _ _)  -> openImage sw vbitmap "img/lose.bmp"
                     (Game _ _ _)  -> putStrLn $ ""
+
+                refreshTiles gameState f out
                 putStrLn $ show game
         onRightClick sw vbitmap gameState f out ok i pt
             = do
@@ -148,11 +164,14 @@ startGame s
                 varSet gameState $ flag game $ scalarToPoint game i
                 game <- varGet gameState
                 refreshTiles gameState f out
+
+                refreshBanner sw vbitmap game
+        refreshBanner sw vbitmap game
+            = do
                 case game of
                     (Game Won _ _)  -> openImage sw vbitmap "img/win.bmp"
                     (Game Lost _ _)  -> openImage sw vbitmap "img/lose.bmp"
-                    (Game _ _ _)  -> putStrLn $ ""
-                putStrLn $ show game
+                    (Game _ _ _)  -> putStrLn $ ""    
         openImage sw vbitmap fname
             = do
                 bm <- bitmapCreateFromFile fname
