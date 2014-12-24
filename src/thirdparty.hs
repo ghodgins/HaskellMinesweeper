@@ -1,6 +1,9 @@
 module ThirdParty where
 import Data.List
 
+-- GNU April 2013 RosettaCode (http://rosettacode.org/)
+-- Converts a list of fractionals arranged in matrix format 
+-- into reduced row echelon form, and returns it as a result
 rref :: (Eq a, Fractional a) => [[a]] -> [[a]]
 rref m = f m 0 [0 .. rows - 1]
   where rows = length m
@@ -26,7 +29,7 @@ rref m = f m 0 [0 .. rows - 1]
                     | otherwise = zipWith h newRow row
                   where h = subtract . (* row !! lead')
 
-replace :: Int -> a -> [a] -> [a]
 {- Replaces the element at the given index. -}
+replace :: Int -> a -> [a] -> [a]
 replace n e l = a ++ e : b
   where (a, _ : b) = splitAt n l

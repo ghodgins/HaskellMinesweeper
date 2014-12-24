@@ -7,15 +7,29 @@ synopsis:            Haskell Implementation of Minesweeper for Functional Progra
 -- description:         
 homepage:            https://github.com/ghodgins/HaskellMinesweeper
 -- license:             
+license:             MIT
 license-file:        LICENSE
 author:              Geoffrey Hodgins, Ciaran Finn, Kevin Bluett
 maintainer:          ghodgins@tcd.ie, finnci@tcd.ie, bluettk@tcd.ie
 -- copyright:           
 category:            Game
 build-type:          Simple
+extra-source-files:  README.md
 cabal-version:       >=1.8
 
+
 executable HaskellMinesweeper
-  -- main-is:             
-  -- other-modules:       
-  build-depends:       base ==4.6.*
+  main-is:             HaskellMinesweeper/Main.hs
+  -- other-modules:
+  default-extensions:  FlexibleInstances
+  build-depends:       base, wx, vector, lens, mtl, cabal-macosx, random
+  hs-source-dirs:      src/
+  default-language:    Haskell2010
+
+test-suite tests
+  default-extensions:  OverloadedStrings, OverlappingInstances, TypeSynonymInstances, FlexibleInstances
+  main-is: HaskellMinesweeper/quickCheck.hs
+  build-depends:       base, wx, vector, lens, mtl, cabal-macosx, random, QuickCheck
+  type: exitcode-stdio-1.0
+  hs-source-dirs:      src/
+  default-language:    Haskell2010
