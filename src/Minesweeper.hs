@@ -8,14 +8,12 @@ import Types
 import System.Random
 import Data.List
 
--- used to signal whether gamae has been won, lost or neither
-data GameState = Won | Lost | Play
+data GameState = Won | Lost | Play deriving(Eq)
 
--- holds state of the game, number of mines in the board, and the board
-data Game = Game { state :: GameState
+data Game = Game { state :: GameState 
                  , numMines :: Int
                  , board    :: [[Square]] 
-                 }
+                 }deriving(Eq)
 
 instance Show Game where
     show (Game state numMines board) =
