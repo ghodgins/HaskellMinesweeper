@@ -5,7 +5,7 @@ HaskellMinesweeper
   - Minesweeper game implementation
   - Graphical User Interface
   - Quickcheck
-  - Move Attempter
+  - Solver
 
 
 ## Game Implementation
