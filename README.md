@@ -59,10 +59,12 @@ In order to test the program please setup the sandbox as per 'usage' section and
 
 `$ cabal test`
 
-## Screenshots
+## Release Screenshots
 ![](/screenshots/splash.jpg?raw=true "Splash Screen" =250px)
-![](/screenshots/game.jpg?raw=true "Game" =250px)
-![](/screenshots/game1.jpeg?raw=true "Game 1" =250px)
+![](/screenshots/game.png?raw=true "Splash Screen" =250px)
+![](/screenshots/game1.png?raw=true "Splash Screen" =250px)
+
+## Development Screenshots 
 ![](/screenshots/lose.jpg?raw=true "Lose" =250px)
 ![](/screenshots/soclose.jpeg?raw=true "So Close" =250px)
 ![](/screenshots/win.jpg?raw=true "So Close" =250px)
