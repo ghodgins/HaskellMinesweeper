@@ -5,7 +5,7 @@ HaskellMinesweeper
   - Minesweeper game implementation
   - Graphical User Interface
   - Quickcheck
-  - AI Solver
+  - Solver
 
 
 ## Game Implementation
@@ -25,12 +25,12 @@ $ ghc interface.hs
 $ ./interface
 ```
 
-##Authors
- - Kevin Bluett
- - Geoffrey Hodgins
- - Ciaran Finn
+## Authors
+ - Kevin Bluett (GUI & Solver)
+ - Geoffrey Hodgins (Gamelogic)
+ - Ciaran Finn (Gamelogic & quickcheck)
 
-##Todo/Issues
+## Todo/Issues
 - Refactor the game implementation (make more monadic and readable, generally use best-practices)
 - Make code more resilient to error (also ensuring by increasing the usage of Quickcheck)
 - Add effects to the GUI (transitions etc)
