@@ -29,7 +29,6 @@ rref m = f m 0 [0 .. rows - 1]
                     | otherwise = zipWith h newRow row
                   where h = subtract . (* row !! lead')
 
-{- Replaces the element at the given index. -}
 replace :: Int -> a -> [a] -> [a]
 replace n e l = a ++ e : b
   where (a, _ : b) = splitAt n l

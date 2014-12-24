@@ -32,19 +32,6 @@ splashScreen
          -- Background image on the slashscreen
         openImage p vbitmap "img/background.bmp"
         set p [clientSize := sz 300 400]
-    where
-        openImage sw vbitmap fname
-            = do
-                bm <- bitmapCreateFromFile fname
-                set vbitmap [value := Just bm]
-                bmsize <- get bm size
-                set sw [virtualSize := bmsize]
-                repaint sw
-        onPaint vbitmap dc viewArea
-          = do mbBitmap <- get vbitmap value
-               case mbBitmap of
-                 Nothing -> return () 
-                 Just bm -> drawBitmap dc bm pointZero False []
 
 -- Produces a minesweeper button for the 
 makeMineSweeperButton :: Frame() -> Int -> Int -> IO (BitmapButton())
@@ -99,23 +86,14 @@ startGame s
              b <- button bp [ text := "Attempt Move" , position := pt 150 4, clientSize := sz 150 25, on command := attemptMove f gameState tiles ]
              set bp [clientSize := sz 330 30]
     where
+        -- Essentially repaints all of the tiles on the game board.
         refreshTiles gameState f tiles
             = do
                 -- 
                 mine <- bitmapCreateFromFile "img/mine.bmp"
                 water <- bitmapCreateFromFile "img/water.bmp"
                 flag <- bitmapCreateFromFile "img/flag.bmp"
-
-                -- 
-                zero <- bitmapCreateFromFile "img/0.bmp"
-                one <- bitmapCreateFromFile "img/1.bmp"
-                two <- bitmapCreateFromFile "img/2.bmp"
-                three <- bitmapCreateFromFile "img/3.bmp"
-                four <- bitmapCreateFromFile "img/4.bmp"
-                five <- bitmapCreateFromFile "img/5.bmp"
-                six <- bitmapCreateFromFile "img/6.bmp"
-                seven <- bitmapCreateFromFile "img/7.bmp"
-                eight <- bitmapCreateFromFile "img/8.bmp"
+                numTiles <- mapM (\x -> bitmapCreateFromFile ("img/" ++ (show x) ++ ".bmp")) [0..8]
 
                 mapAccumM (\i x -> do 
                     game <- varGet gameState
@@ -126,18 +104,7 @@ startGame s
                         (HiddenNumSquare _)     -> bitmapButtonSetBitmapLabel x water
                         (FlaggedSquare _)       -> bitmapButtonSetBitmapLabel x flag
 
-                        -- Apologies about the next few lines, we attempted to insert text
-                        -- into the buttons on top of image but it messed up the
-                        -- rendering, so unfortunately we are dealing with providing a case for each number
-                        (VisibleNumSquare 0)  -> bitmapButtonSetBitmapLabel x zero 
-                        (VisibleNumSquare 1)  -> bitmapButtonSetBitmapLabel x one 
-                        (VisibleNumSquare 2)  -> bitmapButtonSetBitmapLabel x two 
-                        (VisibleNumSquare 3)  -> bitmapButtonSetBitmapLabel x three 
-                        (VisibleNumSquare 4)  -> bitmapButtonSetBitmapLabel x four 
-                        (VisibleNumSquare 5)  -> bitmapButtonSetBitmapLabel x five 
-                        (VisibleNumSquare 6)  -> bitmapButtonSetBitmapLabel x six 
-                        (VisibleNumSquare 7)  -> bitmapButtonSetBitmapLabel x seven 
-                        (VisibleNumSquare 8)  -> bitmapButtonSetBitmapLabel x eight 
+                        (VisibleNumSquare num)  -> bitmapButtonSetBitmapLabel x $ numTiles !! num
 
                     return (i+1, Nothing)) 0 tiles
         -- attemptMove tires to use theautosolver in other to generate a result 
@@ -158,7 +125,7 @@ startGame s
                 refreshTiles gameState f out
                 refreshBanner sw vbitmap gameState
 
-        -- Right click is the flagging action within minesweeper.s
+        -- Right click is the flagging action within minesweeper application
         onRightClick sw vbitmap gameState f out ok i pt
             = do
                 game <- varGet gameState
@@ -167,20 +134,27 @@ startGame s
                 refreshTiles gameState f out
 
                 refreshBanner sw vbitmap gameState
+        -- Changes the image on top of the game depending on gameState
         refreshBanner sw vbitmap gameState
             = do
                 game <- varGet gameState
                 case game of
                     (Game Won _ _)  -> openImage sw vbitmap "img/win.bmp"
                     (Game Lost _ _)  -> openImage sw vbitmap "img/lose.bmp"
-                    (Game _ _ _)  ->openImage sw vbitmap "img/topbanner.bmp"
-        openImage sw vbitmap fname
-            = do
-                bm <- bitmapCreateFromFile fname
-                set vbitmap [value := Just bm]
-                repaint sw
-        onPaint vbitmap dc viewArea
-          = do mbBitmap <- get vbitmap value
-               case mbBitmap of
-                 Nothing -> return () 
-                 Just bm -> drawBitmap dc bm pointZero False []
+                    (Game _ _ _)  -> openImage sw vbitmap "img/topbanner.bmp"
+
+openImage :: (Paint w1, Valued w, Dimensions w1) => w1 -> w (Maybe (Bitmap ())) -> FilePath -> IO ()
+openImage sw vbitmap fname
+    = do
+        bm <- bitmapCreateFromFile fname
+        set vbitmap [value := Just bm]
+        bmsize <- get bm size
+        set sw [virtualSize := bmsize]
+        repaint sw
+
+onPaint :: Valued w => w (Maybe (Bitmap ())) -> DC a -> t -> IO ()
+onPaint vbitmap dc viewArea
+  = do mbBitmap <- get vbitmap value
+       case mbBitmap of
+         Nothing -> return () 
+         Just bm -> drawBitmap dc bm pointZero False []
