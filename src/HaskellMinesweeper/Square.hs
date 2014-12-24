@@ -25,7 +25,7 @@ data Square = VisibleMineSquare
             | HiddenMineSquare
             | VisibleNumSquare { numSurrMines :: Int }
             | HiddenNumSquare { numSurrMines :: Int }
-            | FlaggedSquare { flagged :: Square}
+            | FlaggedSquare { flagged :: Square }
              deriving (Eq)
 
 instance Show Square where

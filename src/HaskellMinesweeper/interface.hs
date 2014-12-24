@@ -58,6 +58,7 @@ createGuiGridRow s f r = map (makeMineSweeperButton f r) [0..s]
 createGuiGrid :: Int -> Frame() -> [[IO (BitmapButton())]]
 createGuiGrid s f = map (createGuiGridRow s f) [0..s]
 
+-- Performs similarly to mapAccum, but in a monadic fashion
 mapAccumM :: Monad m => (c -> a -> m (c,b)) -> c -> [a] -> m (c,[b])
 mapAccumM f init xs = do
   (acc,rev) <- foldM (\(acc,ys) x -> do
@@ -65,9 +66,11 @@ mapAccumM f init xs = do
                         return (acc',y:ys)) (init,[]) xs
   return (acc, reverse rev)
 
+-- Used in order to convert a give int for a square on the board into the co-ordinate system
 scalarToPoint :: Game -> Int -> (Int, Int)
 scalarToPoint Game{..} scalar = (scalar `mod` (length board), quot scalar (length board))
 
+-- Starts the main game interface
 startGame ::  Int -> IO ()
 startGame s
     = do     
