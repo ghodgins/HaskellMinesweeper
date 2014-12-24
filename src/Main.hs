@@ -4,6 +4,7 @@ import Graphics.UI.WX hiding (Point)
 
 import Minesweeper
 import Types
+
 import Interface
 
 main :: IO ()
