@@ -1,4 +1,4 @@
-module ThirdParty where
+module HaskellMinesweeper.ThirdParty where
 import Data.List
 
 -- GNU April 2013 RosettaCode (http://rosettacode.org/)

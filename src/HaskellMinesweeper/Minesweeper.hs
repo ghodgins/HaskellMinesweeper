@@ -1,9 +1,9 @@
 {-#LANGUAGE LambdaCase, RecordWildCards #-}
 
-module Minesweeper where
+module HaskellMinesweeper.Minesweeper where
 
-import Square
-import Types
+import HaskellMinesweeper.Square
+import HaskellMinesweeper.Types
 
 import System.Random
 import Data.List

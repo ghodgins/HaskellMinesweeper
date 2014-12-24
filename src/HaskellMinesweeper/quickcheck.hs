@@ -1,8 +1,8 @@
 
 import Test.QuickCheck hiding (Gen)
-import Square
-import Types
-import Minesweeper
+import HaskellMinesweeper.Square
+import HaskellMinesweeper.Types
+import HaskellMinesweeper.Minesweeper
 import Data.List
 import System.Random
 --checks that adjacent points are correctly returned, 

@@ -1,11 +1,11 @@
 {-#LANGUAGE RecordWildCards #-}
-module Solver where
+module HaskellMinesweeper.Solver where
 import qualified Data.Map
 
-import Minesweeper
-import Square
-import Types
-import ThirdParty as ThirdParty
+import HaskellMinesweeper.Minesweeper
+import HaskellMinesweeper.Square
+import HaskellMinesweeper.Types
+import HaskellMinesweeper.ThirdParty as ThirdParty
 import Data.List
 import qualified Data.Set as Set
 

@@ -1,5 +1,5 @@
-module Square where
-import Types
+module HaskellMinesweeper.Square where
+import HaskellMinesweeper.Types
 
 -- returns valid points surrounding a point on the board
 adjacentSquares :: Point -> Int -> Int -> [Point]

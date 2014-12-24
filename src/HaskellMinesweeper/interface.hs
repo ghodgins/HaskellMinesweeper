@@ -1,6 +1,6 @@
 {-#LANGUAGE RecordWildCards #-}
 --on Mac compile using: ghc --make interface.hs
-module Interface where
+module HaskellMinesweeper.Interface where
 import Graphics.UI.WX hiding (Point)
 import Graphics.UI.WXCore hiding (Point)
 import Control.Monad
@@ -8,10 +8,10 @@ import Data.Traversable hiding (get, sequence, mapM)
 import Control.Monad.State.Lazy hiding (get)
 import System.Random
 
-import Minesweeper
-import Types
-import Square
-import Solver
+import HaskellMinesweeper.Minesweeper
+import HaskellMinesweeper.Types
+import HaskellMinesweeper.Square
+import HaskellMinesweeper.Solver
 
 -- Screen shown to user when the program starts, shows difficulty levels and allows
 -- the user to select one of them 
